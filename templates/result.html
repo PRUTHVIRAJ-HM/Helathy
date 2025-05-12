@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card bg-dark shadow-lg mb-4">
+                <div class="card-header">
+                    <h2 class="mb-0">Food Safety Analysis Result</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h3>{{ food_product|title }}</h3>
+                            <p class="lead">
+                                {% if is_safe %}
+                                <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i> Safe to consume</span>
+                                {% else %}
+                                <span class="badge bg-danger"><i class="fas fa-exclamation-triangle me-1"></i> May not be safe</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <a href="/" class="btn btn-outline-primary">
+                                <i class="fas fa-arrow-left me-1"></i> Back to Home
+                            </a>
+                            <button class="btn btn-outline-secondary ms-2" onclick="window.print()">
+                                <i class="fas fa-print me-1"></i> Print Result
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="alert {% if is_safe %}alert-success{% else %}alert-danger{% endif %} mb-4">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                {% if is_safe %}
+                                <i class="fas fa-check-circle fa-2x me-3"></i>
+                                {% else %}
+                                <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h4 class="alert-heading">{{ recommendation }}</h4>
+                                <p class="mb-0">
+                                    {% if is_safe %}
+                                    We have analyzed your prescription and the food information, and found no significant concerns.
+                                    {% else %}
+                                    Based on your prescription and health information, we recommend caution with this food.
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if not is_safe and explanation %}
+                    <div class="mb-4">
+                        <h4>Reasons for Caution:</h4>
+                        <ul class="list-group list-group-flush">
+                            {% for reason in explanation %}
+                            <li class="list-group-item bg-dark text-light">
+                                <i class="fas fa-exclamation-circle text-warning me-2"></i> {{ reason }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card bg-dark mb-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-pills me-2"></i> Medications Detected</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% if restrictions.medications %}
+                                    <ul class="list-group list-group-flush">
+                                        {% for medication in restrictions.medications %}
+                                        <li class="list-group-item bg-dark text-light">{{ medication|title }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% else %}
+                                    <p class="card-text text-muted">No specific medications detected in your prescription.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-dark mb-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-heartbeat me-2"></i> Health Conditions</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% if restrictions.conditions %}
+                                    <ul class="list-group list-group-flush">
+                                        {% for condition in restrictions.conditions %}
+                                        <li class="list-group-item bg-dark text-light">{{ condition|title }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% else %}
+                                    <p class="card-text text-muted">No specific health conditions detected in your prescription.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-ban me-2"></i> Dietary Restrictions</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if restrictions.restrictions %}
+                            <div class="row">
+                                {% for restriction in restrictions.restrictions %}
+                                <div class="col-md-4 col-sm-6 mb-2">
+                                    <div class="badge bg-warning text-dark p-2 w-100">{{ restriction }}</div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <p class="card-text text-muted">No specific dietary restrictions identified based on your prescription.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="card bg-dark">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i> Important Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <h6 class="alert-heading">This is an automated analysis</h6>
+                                <p class="mb-0">
+                                    While we use advanced technology to analyze food safety, this information should not replace professional 
+                                    medical advice. Always consult with your healthcare provider for personalized guidance.
+                                </p>
+                            </div>
+                            
+                            {% if not is_safe %}
+                            <div class="alert alert-warning">
+                                <h6 class="alert-heading">Recommendation</h6>
+                                <p class="mb-0">
+                                    Consider discussing with your doctor or pharmacist before consuming this food, especially if you are taking 
+                                    multiple medications or have complex health conditions.
+                                </p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="/" class="btn btn-primary">
+                        <i class="fas fa-search me-1"></i> Check Another Food
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
